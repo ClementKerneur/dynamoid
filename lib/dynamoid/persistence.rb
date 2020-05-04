@@ -23,7 +23,9 @@ module Dynamoid
 
     module ClassMethods
       def table_name
-        table_base_name = options[:name] || base_class.name.split('::').last.downcase.pluralize
+        # Allow pass Proc function -> { logic_to_retrieve }
+        # or directly String for table name option.
+        table_base_name = (options[:name].present? && (options[:name].is_a?(String) && options[:name] || options[:name].is_a?(Proc) && options[:name].call)) || base_class.name.split('::').last.downcase.pluralize
 
         @table_name ||= [Dynamoid::Config.namespace.to_s, table_base_name].reject(&:empty?).join('_')
       end

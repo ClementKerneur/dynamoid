@@ -33,20 +33,8 @@ module Dynamoid #:nodoc:
 
       private
 
-      # Find the target association, either has_many or has_one. Uses either options[:inverse_of] or the source class name and default parsing to
-      # return the most likely name for the target association.
-      #
-      # @since 0.2.0
-      def target_association
-        has_many_key_name = options[:inverse_of] || source.class.to_s.underscore.pluralize.to_sym
-        has_one_key_name = options[:inverse_of] || source.class.to_s.underscore.to_sym
-        unless target_class.associations[has_many_key_name].nil?
-          return has_many_key_name if target_class.associations[has_many_key_name][:type] == :has_many
-        end
-
-        unless target_class.associations[has_one_key_name].nil?
-          return has_one_key_name if target_class.associations[has_one_key_name][:type] == :has_one
-        end
+      def inversed_types
+        [:has_many, :has_one]
       end
     end
   end

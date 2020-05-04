@@ -124,6 +124,15 @@ module Dynamoid #:nodoc:
       def build(attributes = {})
         target_class.build(attributes)
       end
+
+      # Find the target association, either has_many or has_one. Uses either options[:inverse_of] or the source class name and default parsing to
+      # return the most likely name for the target association.
+      #
+      # @since 0.2.0
+      def target_association
+        key_name = options[:inverse_of] || target_class.associations.find { |key,association| association[:class] == source_class && inversed_types.include?(association[:type]) }.try(:first)
+        return key_name if (guess = target_class.associations[key_name]).present? && inversed_types.include?(guess[:type])
+      end
     end
   end
 end

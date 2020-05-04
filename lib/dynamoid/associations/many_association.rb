@@ -22,7 +22,14 @@ module Dynamoid #:nodoc:
       #
       # @since 0.2.0
       def find_target
-        Array(target_class.find(source_ids.to_a))
+        # CKTD
+        if target_foreign_key = target_class.associations[target_association][:foreign_key]
+          query_args = {}
+          query_args[target_foreign_key] = source.id
+          Array(target_class.where(query_args))
+        else
+          Array(target_class.find(source_ids.to_a))
+        end
       end
 
       def records
